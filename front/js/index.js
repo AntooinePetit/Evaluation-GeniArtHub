@@ -1,3 +1,4 @@
+// Récupération des données globales de tous les produits
 async function getDatas() {
   try {
     const req = await fetch("http://localhost:3000/api/products/");
@@ -7,6 +8,7 @@ async function getDatas() {
   }
 }
 
+// Affichage des données sur la page
 async function populateDatas() {
   const datas = await getDatas();
   const sectionProducts = document.querySelector(".products");
@@ -22,8 +24,9 @@ async function populateDatas() {
       sectionProducts.insertAdjacentHTML("beforeend", template);
     });
   } catch (e) {
-    console.error(e)
-    sectionProducts.innerHTML = '<p class="error">Erreur ! Aucun article trouvé !</p>'
+    console.error(e);
+    sectionProducts.innerHTML =
+      '<p class="error">Erreur ! Aucun article trouvé !</p>';
   }
 }
 
