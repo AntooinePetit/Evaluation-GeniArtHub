@@ -20,14 +20,13 @@ async function populateDatas() {
          <p>Votre panier est vide. Veuillez ajouter au moins un article à votre panier</p>
       </article>`
       );
-      console.log('panier vide')
       return;
     }
     panier.forEach((produit) => {
       const { idCart, id, taille, quantite } = produit;
       const produitRecherche = datas.find((prod) => prod._id === id);
       const { titre, image, declinaisons } = produitRecherche;
-      const tailleChoisie = declinaisons[taille]
+      const tailleChoisie = declinaisons[taille];
       const { prix } = tailleChoisie;
       const template = `<article>
             <img src="${image}" alt="${titre}">
@@ -39,12 +38,18 @@ async function populateDatas() {
                <input type="number" name="quantity-${idCart}" id="quantity-${idCart}"  placeholder="${quantite}" value="${quantite}" minlength="1">
             </div>
             <button id="delete-bird">Supprimer</button>
-          </article>`;
-      document.querySelector("#panier > div").insertAdjacentHTML('afterbegin', template)
-      console.log(produitRecherche, tailleChoisie);
+          </article>
+          <p style="color:red;" id="erreur-quantite-${idCart}"></p>`;
+      document
+        .querySelector("#panier > div")
+        .insertAdjacentHTML("afterbegin", template);
+      const input = document.querySelector("input");
+      input.addEventListener("change", (e) => {
+        updateCart(idCart, input.value);
+      });
     });
   } catch (e) {
-    console.error(e)
+    console.error(e);
     document.querySelector("#panier > div").insertAdjacentHTML(
       "afterbegin",
       `
@@ -52,6 +57,19 @@ async function populateDatas() {
          <p>Votre panier est vide. Veuillez ajouter au moins un article à votre panier</p>
       </article>`
     );
+  }
+}
+
+// Mise à jour du panier
+function updateCart(id, quantite) {
+  const produitAModifier = panier.find((produit) => produit.idCart === id);
+  const erreur = document.querySelector(`#erreur-quantite-${id}`);
+  if (quantite < 0 || quantite > 100) {
+    erreur.textContent = "Vous devez avoir entre 1 et 100 articles";
+  } else {
+    produitAModifier.quantite = quantite;
+    localStorage.setItem("panier", JSON.stringify(panier));
+    erreur.textContent = "";
   }
 }
 
