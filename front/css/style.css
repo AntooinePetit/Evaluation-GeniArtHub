@@ -278,3 +278,12 @@ article > div > div.price > p {
     font-weight: 400;
     line-height: normal;
 }
+
+/* Adds */
+
+.error{
+    color: red;
+    font-size: 40px;
+    text-align: center;
+    grid-column: 1 / 5;
+}
