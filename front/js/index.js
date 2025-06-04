@@ -1,8 +1,7 @@
 async function getDatas() {
   try {
     const req = await fetch("http://localhost:3000/api/products/");
-    const res = await req.json();
-    return res;
+    return await req.json();
   } catch (e) {
     console.error(e);
   }
