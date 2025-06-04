@@ -35,6 +35,7 @@ async function populateDatas() {
                     </select>
                 </div>
                 <a class="button-buy" href="#">Buy bird</a>
+                <p style="color:red;" id="message-d-erreur">  </p>
             </div>
         </article>
 
@@ -76,16 +77,27 @@ async function populateDatas() {
 
 // Envoie des produits dans le panier
 function addProductToCart(productId, declinaison, quantite) {
+  // Vérification des quantités
+  if(quantite > 100 || quantite < 1){
+    showError()
+    return
+  }
   const idPanier = `${productId}-${declinaison}`;
   // Si le produit existe déjà dans le panier, on met à jour sa quantité
   if (panier.find((produit) => produit.idCart === idPanier)) {
     const produitMisAJour = panier.find(
       (produit) => produit.idCart === idPanier
     );
+    // Vérification des quantités
+    if(parseInt(produitMisAJour.quantite) + parseInt(quantite) > 100 || parseInt(produitMisAJour.quantite) + parseInt(quantite) < 1){
+      showError()
+      return
+    }
     produitMisAJour.quantite =
       parseInt(produitMisAJour.quantite) + parseInt(quantite);
     console.log("Elément mis à jour");
     localStorage.setItem("panier", JSON.stringify(panier));
+    showError(false)
     return;
   }
   // Sinon on ajoute le nouveau produit au panier
@@ -98,6 +110,17 @@ function addProductToCart(productId, declinaison, quantite) {
   panier.push(nouveauProduit);
   console.log("Ajout d'un nouvel élément");
   localStorage.setItem("panier", JSON.stringify(panier));
+  showError(false)
+}
+
+// Fonction d'affichage d'erreur
+function showError(isError = true){
+  const paragrapheErreur = document.querySelector('#message-d-erreur')
+  if(isError === true){
+    paragrapheErreur.textContent = "Veuillez ajouter entre 1 et 100 unités."
+  } else {
+    paragrapheErreur.textContent = ''
+  }
 }
 
 // Récupération du panier dans le local storage s'il existe, sinon création d'un panier vide
