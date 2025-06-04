@@ -25,7 +25,7 @@ async function populateDatas() {
                 <p>${shortdescription[0]} </p>
                 <div class="price">
                     <p>Acheter pour</p>
-                    <span class="showprice">35.25€</span>
+                    <span class="showprice">${declinaisons[0].prix}€</span>
                 </div>
                 <div class="declinaison">
                     <input type="number" name="quantity" id="quantity" placeholder="1" value="1" minlength="1">
@@ -42,8 +42,13 @@ async function populateDatas() {
         </aside>`;
     detailOeuvre.insertAdjacentHTML("beforeend", template);
     const select = document.querySelector('#format')
+    let i = 0
     declinaisons.forEach((declinaison) => {
-      select.insertAdjacentHTML('beforeend', `<option> ${declinaison.taille} </option>`)
+      select.insertAdjacentHTML('beforeend', `<option value="${i}"> ${declinaison.taille} </option>`)
+      i++
+    })
+    select.addEventListener('change', (e) => {
+      document.querySelector('.showprice').textContent = `${declinaisons[select.value].prix}€`
     })
   } catch (e) {
     console.error(e);
