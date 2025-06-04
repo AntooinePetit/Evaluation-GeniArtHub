@@ -77,41 +77,32 @@ async function populateDatas() {
 // Envoie des produits dans le panier
 function addProductToCart(productId, declinaison, quantite) {
   const idPanier = `${productId}-${declinaison}`;
-  // Si le panier est vide on ajoute le nouvel article et on arrête la fonction sinon double ajout
-  if (panier.length == 0) {
-    const nouveauProduit = {
-      idCart: idPanier,
-      id: productId,
-      taille: declinaison,
-      quantite,
-    };
-    panier.push(nouveauProduit);
-    console.log("Ajout d'un nouvel élément");
+  // Si le produit existe déjà dans le panier, on met à jour sa quantité
+  if (panier.find((produit) => produit.idCart === idPanier)) {
+    const produitMisAJour = panier.find(
+      (produit) => produit.idCart === idPanier
+    );
+    produitMisAJour.quantite =
+      parseInt(produitMisAJour.quantite) + parseInt(quantite);
+    console.log("Elément mis à jour");
+    localStorage.setItem("panier", JSON.stringify(panier));
     return;
   }
-  panier.forEach((produit) => {
-    // Si le produit est déjà présent dans le panier, mise à jour de la quantité
-    if (idPanier == produit.idCart) {
-      produit.quantite = parseInt(produit.quantite) + parseInt(quantite);
-      console.log("Ajouté à un élément existant");
-      // Sinon on ajoute le produit au panier
-    } else {
-      const nouveauProduit = {
-        idCart: idPanier,
-        id: productId,
-        taille: declinaison,
-        quantite,
-      };
-      panier.push(nouveauProduit);
-      console.log("Ajout d'un nouvel élément");
-    }
-  });
-  console.log(panier);
+  // Sinon on ajoute le nouveau produit au panier
+  const nouveauProduit = {
+    idCart: idPanier,
+    id: productId,
+    taille: declinaison,
+    quantite,
+  };
+  panier.push(nouveauProduit);
+  console.log("Ajout d'un nouvel élément");
+  localStorage.setItem("panier", JSON.stringify(panier));
 }
 
 // Récupération du panier dans le local storage s'il existe, sinon création d'un panier vide
-let panier = localStorage.getItem("panier")
-  ? localStorage.getItem("panier")
+const panier = localStorage.getItem("panier")
+  ? JSON.parse(localStorage.getItem("panier"))
   : [];
 
 populateDatas();
