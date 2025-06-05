@@ -171,7 +171,6 @@ async function envoiCommande(order) {
       body: JSON.stringify(order),
     });
     const res = await req.json();
-    console.log(res);
     affichageNumeroCommande(res.orderId)
   } catch (e) {
     console.error(e);
@@ -180,7 +179,6 @@ async function envoiCommande(order) {
 
 // Fonction d'affichage du numéro de commande
 function affichageNumeroCommande(numeroDeCommande) {
-  console.log(numeroDeCommande)
   const modal = document.createElement("dialog");
   document.body.insertAdjacentElement('afterbegin', modal)
   modal.innerHTML = `

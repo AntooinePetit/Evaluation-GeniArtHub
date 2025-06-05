@@ -95,7 +95,6 @@ function addProductToCart(productId, declinaison, quantite) {
     }
     produitMisAJour.quantite =
       parseInt(produitMisAJour.quantite) + parseInt(quantite);
-    console.log("Elément mis à jour");
     localStorage.setItem("panier", JSON.stringify(panier));
     showError(false)
     return;
@@ -108,7 +107,6 @@ function addProductToCart(productId, declinaison, quantite) {
     quantite,
   };
   panier.push(nouveauProduit);
-  console.log("Ajout d'un nouvel élément");
   localStorage.setItem("panier", JSON.stringify(panier));
   showError(false)
 }
