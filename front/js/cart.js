@@ -160,6 +160,19 @@ const panier = localStorage.getItem("panier")
 
 populateDatas();
 
+// Fonction d'envoi de commande
+async function envoiCommande(order) {
+  const req = await fetch('http://localhost:3000/api/products/order', {
+    method: 'POST',
+    headers: {
+      "Content-type": "application/JSON",
+    },
+    body: JSON.stringify(order)
+  })
+  const res = await req.json()
+  console.log(res)
+}
+
 // Gestion du formulaire
 const formulaire = document.querySelector("form");
 formulaire.addEventListener("submit", (e) => {
@@ -169,39 +182,59 @@ formulaire.addEventListener("submit", (e) => {
   const regexAddress = /^[a-zA-Z0-9à-ÿÀ-ÿ' -]{10,}$/; // Toutes les majuscules et minuscules, toutes les lettres avec accents, tous les chiffres, les espaces, tirets et apostrophes. Minimum 10 caractères
   const regexCity = /^[a-zA-Zà-ÿÀ-ÿ -]{3,}$/; // Toutes les majuscules et minuscule, toutes les lettres avec accents, espaces et tirets. Minimum 3 caractères
   const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; // Toutes les majuscules et minuscules, tous les chiffres, les points, les tirets et les underscores. Un arobase obligatoire. Toutes les majuscules et minuscules, tous les chiffres, les points et les tirets. Un point obligatoire. Toutes les majuscules et minuscules, entre 2 et 10 caractères.
-  let isCorrect = true
-  if(!regexFirstName.test(document.querySelector('#first-name').value)){
-    isCorrect = false
-    document.querySelector('#error-first-name').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  let isCorrect = true;
+  if (!regexFirstName.test(document.querySelector("#first-name").value)) {
+    isCorrect = false;
+    document.querySelector("#error-first-name").textContent =
+      "Erreur ! Veuillez entrer une valeur valide";
   } else {
-    document.querySelector('#error-first-name').textContent = ""
+    document.querySelector("#error-first-name").textContent = "";
   }
-  if(!regexLastName.test(document.querySelector('#last-name').value)){
-    isCorrect = false
-    document.querySelector('#error-last-name').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  if (!regexLastName.test(document.querySelector("#last-name").value)) {
+    isCorrect = false;
+    document.querySelector("#error-last-name").textContent =
+      "Erreur ! Veuillez entrer une valeur valide";
   } else {
-    document.querySelector('#error-last-name').textContent = ""
+    document.querySelector("#error-last-name").textContent = "";
   }
-  if(!regexAddress.test(document.querySelector('#address').value)){
-    isCorrect = false
-    document.querySelector('#error-address').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  if (!regexAddress.test(document.querySelector("#address").value)) {
+    isCorrect = false;
+    document.querySelector("#error-address").textContent =
+      "Erreur ! Veuillez entrer une valeur valide";
   } else {
-    document.querySelector('#error-address').textContent = ""
+    document.querySelector("#error-address").textContent = "";
   }
-  if(!regexCity.test(document.querySelector('#city').value)){
-    isCorrect = false
-    document.querySelector('#error-city').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  if (!regexCity.test(document.querySelector("#city").value)) {
+    isCorrect = false;
+    document.querySelector("#error-city").textContent =
+      "Erreur ! Veuillez entrer une valeur valide";
   } else {
-    document.querySelector('#error-city').textContent = ""
+    document.querySelector("#error-city").textContent = "";
   }
-  if(!regexEmail.test(document.querySelector('#mail').value)){
-    isCorrect = false
-    document.querySelector('#error-mail').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  if (!regexEmail.test(document.querySelector("#mail").value)) {
+    isCorrect = false;
+    document.querySelector("#error-mail").textContent =
+      "Erreur ! Veuillez entrer une valeur valide";
   } else {
-    document.querySelector('#error-mail').textContent = ""
+    document.querySelector("#error-mail").textContent = "";
   }
-  if(!isCorrect){
-    return
+  if (!isCorrect) {
+    return;
   }
-  
+  const contact = {
+    firstName: document.querySelector("#first-name").value,
+    lastName: document.querySelector("#last-name").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#mail").value,
+  };
+  const products = [];
+  panier.forEach((produit) => {
+    products.push(produit.id);
+  });
+  const order = {
+    contact,
+    products,
+  };
+  envoiCommande(order)
 });
