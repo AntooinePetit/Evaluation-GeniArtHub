@@ -1,3 +1,5 @@
+// Gestion des données et création de la page
+
 // Récupération des données globales de tous les produits
 async function getDatas() {
   try {
@@ -7,9 +9,6 @@ async function getDatas() {
     console.error(e);
   }
 }
-
-// On rend les datas accessible partout dans le document
-let datas;
 
 // Affichage des données du produit
 async function populateDatas() {
@@ -69,6 +68,10 @@ async function populateDatas() {
     );
   }
 }
+
+
+
+// Gestion dynamique du panier et de l'affichage
 
 // Mise à jour du panier
 function updateCart(id, quantite, input) {
@@ -153,25 +156,76 @@ function calcTotals() {
   )} €`;
 }
 
-// Récupération du panier dans le local storage s'il existe, sinon création d'un panier vide
-const panier = localStorage.getItem("panier")
-  ? JSON.parse(localStorage.getItem("panier"))
-  : [];
 
-populateDatas();
+
+// Gestion de l'envoie de commande et de l'affichage après confirmation
 
 // Fonction d'envoi de commande
 async function envoiCommande(order) {
-  const req = await fetch('http://localhost:3000/api/products/order', {
-    method: 'POST',
-    headers: {
-      "Content-type": "application/JSON",
-    },
-    body: JSON.stringify(order)
-  })
-  const res = await req.json()
-  console.log(res)
+  try {
+    const req = await fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/JSON",
+      },
+      body: JSON.stringify(order),
+    });
+    const res = await req.json();
+    console.log(res);
+    affichageNumeroCommande(res.orderId)
+  } catch (e) {
+    console.error(e);
+  }
 }
+
+// Fonction d'affichage du numéro de commande
+function affichageNumeroCommande(numeroDeCommande) {
+  console.log(numeroDeCommande)
+  const modal = document.createElement("dialog");
+  document.body.insertAdjacentElement('afterbegin', modal)
+  modal.innerHTML = `
+  <i class="fa-solid fa-xmark"></i>
+   <p id="title-modale">Félicitations</p>
+   <p>La commande a été passée avec succès</p>
+   <p id="command-number">Votre numéro de commande est : ${numeroDeCommande}</p>
+  `;
+  modal.showModal()
+  setTimeout(() => {
+    modal.close()
+    modal.remove()
+    clearPage()
+  }, 6000)
+}
+
+// Fonction pour remettre la page à 0 et vider le panier
+function clearPage() {
+  formulaire.reset()
+  const articles = document.querySelectorAll('article')
+  articles.forEach((article) => {
+    article.remove()
+  })
+  localStorage.clear()
+  panier = []
+  calcTotals()
+}
+
+
+
+// Déclaration des variables/constantes à portée globale
+
+// Récupération du panier dans le local storage s'il existe, sinon création d'un panier vide
+let panier = localStorage.getItem("panier")
+  ? JSON.parse(localStorage.getItem("panier"))
+  : [];
+
+// On rend les datas accessible partout dans le document
+let datas;
+
+
+
+populateDatas();
+
+
 
 // Gestion du formulaire
 const formulaire = document.querySelector("form");
@@ -236,5 +290,5 @@ formulaire.addEventListener("submit", (e) => {
     contact,
     products,
   };
-  envoiCommande(order)
+  envoiCommande(order);
 });
