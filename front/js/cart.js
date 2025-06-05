@@ -69,8 +69,6 @@ async function populateDatas() {
   }
 }
 
-
-
 // Gestion dynamique du panier et de l'affichage
 
 // Mise à jour du panier
@@ -156,58 +154,91 @@ function calcTotals() {
   )} €`;
 }
 
-
-
-// Gestion de l'envoie de commande et de l'affichage après confirmation
+// Gestion de l'envoie de commande et de l'affichage après confirmation ou en cas d'erreur
 
 // Fonction d'envoi de commande
 async function envoiCommande(order) {
-  try {
-    const req = await fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/JSON",
-      },
-      body: JSON.stringify(order),
-    });
-    const res = await req.json();
-    affichageNumeroCommande(res.orderId)
-  } catch (e) {
-    console.error(e);
+  if (panier.length > 0) {
+    try {
+      const req = await fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/JSON",
+        },
+        body: JSON.stringify(order),
+      });
+      const res = await req.json();
+      affichageNumeroCommande(res.orderId);
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    affichageErreur();
   }
 }
 
 // Fonction d'affichage du numéro de commande
 function affichageNumeroCommande(numeroDeCommande) {
   const modal = document.createElement("dialog");
-  document.body.insertAdjacentElement('afterbegin', modal)
+  document.body.insertAdjacentElement("afterbegin", modal);
   modal.innerHTML = `
   <i class="fa-solid fa-xmark"></i>
    <p id="title-modale">Félicitations</p>
    <p>La commande a été passée avec succès</p>
    <p id="command-number">Votre numéro de commande est : ${numeroDeCommande}</p>
   `;
-  modal.showModal()
+  document.querySelector("dialog > i").addEventListener("click", () => {
+    modal.close();
+    modal.remove();
+    clearPage();
+    return;
+  });
+  modal.showModal();
   setTimeout(() => {
-    modal.close()
-    modal.remove()
-    clearPage()
-  }, 6000)
+    modal.close();
+    modal.remove();
+    clearPage();
+  }, 6000);
+}
+
+function affichageErreur() {
+  const modal = document.createElement("dialog");
+  document.body.insertAdjacentElement("afterbegin", modal);
+  modal.innerHTML = `
+  <i class="fa-solid fa-xmark"></i>
+   <p id="title-modale">Erreur</p>
+   <p>Votre panier est vide, ajoutez au moins un article pour pouvoir passer commande</p>
+  `;
+  document.querySelector("dialog > i").addEventListener("click", () => {
+    modal.close();
+    modal.remove();
+    return;
+  });
+  modal.showModal();
+  setTimeout(() => {
+    modal.close();
+    modal.remove();
+  }, 3000);
 }
 
 // Fonction pour remettre la page à 0 et vider le panier
 function clearPage() {
-  formulaire.reset()
-  const articles = document.querySelectorAll('article')
+  formulaire.reset();
+  const articles = document.querySelectorAll("article");
   articles.forEach((article) => {
-    article.remove()
-  })
-  localStorage.clear()
-  panier = []
-  calcTotals()
+    article.remove();
+  });
+  localStorage.clear();
+  panier = [];
+  document.querySelector("#panier > div").insertAdjacentHTML(
+    "afterbegin",
+    `
+      <article>
+         <p>Votre panier est vide. Veuillez ajouter au moins un article à votre panier</p>
+      </article>`
+  );
+  calcTotals();
 }
-
-
 
 // Déclaration des variables/constantes à portée globale
 
@@ -219,11 +250,7 @@ let panier = localStorage.getItem("panier")
 // On rend les datas accessible partout dans le document
 let datas;
 
-
-
 populateDatas();
-
-
 
 // Gestion du formulaire
 const formulaire = document.querySelector("form");
