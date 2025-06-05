@@ -34,7 +34,7 @@ async function populateDatas() {
       const template = `<article id="${idCart}">
             <img src="${image}" alt="${titre}">
             <h2>${titre}</h2>
-            <p>${taille}</p>
+            <p>${tailleChoisie.taille}</p>
             <p>${prix}€</p>
             <div class="input-container">
                <label for="quantity-${idCart}">Quantité : </label>
@@ -71,7 +71,8 @@ function updateCart(id, quantite, input) {
   if (quantite < 0 || quantite > 100) {
     erreur.textContent = "Vous devez avoir entre 1 et 100 articles";
     input.value = quantite > 100 ? 100 : 0
-  } else if (quantite === 0) {
+  } else if (quantite == 0) {
+    supprimerArticle(id)
   } else {
     produitAModifier.quantite = quantite;
     localStorage.setItem("panier", JSON.stringify(panier));
@@ -83,6 +84,7 @@ function updateCart(id, quantite, input) {
 // Fonction de suppression d'élément
 function supprimerArticle(id) {
   const articleASupprimer = document.querySelector(`#${id}`);
+  const produitASupprimer = panier.find((produit) => produit.idCart === id);
   const modal = document.createElement("dialog");
   modal.id = "delete";
   modal.innerHTML = `
@@ -96,6 +98,28 @@ function supprimerArticle(id) {
   document.body.insertAdjacentElement("afterbegin", modal);
   modal.showModal();
 
+  // Ecouter si l'utilisateur confirme ou non vouloir supprimer l'article
+  const boutonOui = document.querySelector('#yes')
+  const boutonNon = document.querySelector('#no')
+
+  boutonNon.addEventListener('click', (e) => {
+    modal.close()
+    modal.remove()
+    document.querySelector(`#quantity-${id}`).value = document.querySelector(`#quantity-${id}`).value <= 0 ? 1 : document.querySelector(`#quantity-${id}`).value
+    calcTotals
+  })
+
+  boutonOui.addEventListener('click', (e) => {
+    const index = panier.indexOf(produitASupprimer)
+    if(index != -1){
+      panier.splice(index, 1)
+    }
+    modal.close()
+    modal.remove()
+    articleASupprimer.remove()
+    localStorage.setItem("panier", JSON.stringify(panier));
+    calcTotals
+  })
 
 }
 
@@ -112,6 +136,10 @@ function calcTotals() {
     articleTotal += parseInt(quantite);
     prixTotal += parseInt(quantite) * prix;
   });
+  if(panier == []){
+    articleTotal = 0
+    prixTotal = 0
+  }
   totalArticles.textContent = `${articleTotal} articles pour un montant de ${prixTotal.toFixed(2)} €`;
 }
 
