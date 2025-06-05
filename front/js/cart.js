@@ -40,9 +40,9 @@ async function populateDatas() {
                <label for="quantity-${idCart}">Quantité : </label>
                <input type="number" name="quantity-${idCart}" id="quantity-${idCart}"  placeholder="${quantite}" value="${quantite}" minlength="1">
             </div>
-            <button id="delete-bird">Supprimer</button>
+            <button id="delete-${idCart}">Supprimer</button>
           </article>
-          <p style="color:red;" id="erreur-quantite-${idCart}"></p>`;
+          <p style="color:red;" id="erreur-quantite-${idCart}" class="erreur-quantite"></p>`;
       document
         .querySelector("#panier > div")
         .insertAdjacentHTML("afterbegin", template);
@@ -50,8 +50,15 @@ async function populateDatas() {
       input.addEventListener("change", (e) => {
         updateCart(idCart, input.value, input);
       });
+      
+      // Ecouteur d'évènement du bouton 'Supprimer'
+      const boutonDelete = document.querySelector(`#delete-${idCart}`)
+      boutonDelete.addEventListener('click', (e) => {
+        supprimerArticle(idCart)
+      })
     });
     calcTotals();
+
   } catch (e) {
     console.error(e);
     document.querySelector("#panier > div").insertAdjacentHTML(
@@ -106,7 +113,7 @@ function supprimerArticle(id) {
     modal.close()
     modal.remove()
     document.querySelector(`#quantity-${id}`).value = document.querySelector(`#quantity-${id}`).value <= 0 ? 1 : document.querySelector(`#quantity-${id}`).value
-    calcTotals
+    calcTotals()
   })
 
   boutonOui.addEventListener('click', (e) => {
@@ -118,7 +125,7 @@ function supprimerArticle(id) {
     modal.remove()
     articleASupprimer.remove()
     localStorage.setItem("panier", JSON.stringify(panier));
-    calcTotals
+    calcTotals()
   })
 
 }

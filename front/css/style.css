@@ -362,6 +362,12 @@ article > div > div.price > p {
         }
       }
 
+      .erreur-quantite {
+        text-align: center;
+        font-family: "Source Sans Pro", sans-serif;
+        font-size: 24px;
+      }
+
       #total-article {
         font-family: "Source Sans Pro", sans-serif;
         font-size: 32px;
@@ -420,20 +426,20 @@ dialog {
   width: 1350px;
   height: 483px;
 
-  i{
+  i {
     color: black;
     position: absolute;
     right: 15px;
     top: 15px;
     font-size: 25px;
 
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }
 
   p,
-  li{
+  li {
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 400;
     font-size: 32px;
@@ -448,7 +454,7 @@ dialog {
     padding-bottom: 160px;
   }
 
-  &::backdrop{
+  &::backdrop {
     background: #000000b0;
   }
 }
@@ -473,7 +479,7 @@ dialog {
     padding: 10px 15px;
     transition: all 0.3s ease;
 
-    &:hover{
+    &:hover {
       background: #ee7f43;
       color: white;
       cursor: pointer;
