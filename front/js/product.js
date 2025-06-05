@@ -35,7 +35,7 @@ async function populateDatas() {
                     </select>
                 </div>
                 <a class="button-buy" href="#">Buy bird</a>
-                <p style="color:red;" id="message-d-erreur">  </p>
+                <p style="color:red;" id="message-d-info">  </p>
             </div>
         </article>
 
@@ -115,11 +115,13 @@ function addProductToCart(productId, declinaison, quantite) {
 
 // Fonction d'affichage d'erreur
 function showError(isError = true){
-  const paragrapheErreur = document.querySelector('#message-d-erreur')
+  const paragrapheErreur = document.querySelector('#message-d-info')
   if(isError === true){
-    paragrapheErreur.textContent = "Veuillez ajouter entre 1 et 100 unités."
+    paragrapheErreur.innerHTML = "Vous ne pouvez avoir qu'entre 1 et 100 unités dans votre <a href='cart.html'>panier</a>."
+    paragrapheErreur.style.color = 'red'
   } else {
-    paragrapheErreur.textContent = ''
+    paragrapheErreur.textContent = 'Article ajouté au panier'
+    paragrapheErreur.style.color = 'green'
   }
 }
 
