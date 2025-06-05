@@ -418,6 +418,12 @@ article > div > div.price > p {
           cursor: pointer;
         }
       }
+
+      .error-form{
+        color: red;
+        font-family: "Source Sans Pro", sans-serif;
+        font-size: 24px;
+      }
     }
   }
 }

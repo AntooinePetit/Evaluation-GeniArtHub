@@ -50,15 +50,14 @@ async function populateDatas() {
       input.addEventListener("change", (e) => {
         updateCart(idCart, input.value, input);
       });
-      
+
       // Ecouteur d'évènement du bouton 'Supprimer'
-      const boutonDelete = document.querySelector(`#delete-${idCart}`)
-      boutonDelete.addEventListener('click', (e) => {
-        supprimerArticle(idCart)
-      })
+      const boutonDelete = document.querySelector(`#delete-${idCart}`);
+      boutonDelete.addEventListener("click", (e) => {
+        supprimerArticle(idCart);
+      });
     });
     calcTotals();
-
   } catch (e) {
     console.error(e);
     document.querySelector("#panier > div").insertAdjacentHTML(
@@ -77,15 +76,15 @@ function updateCart(id, quantite, input) {
   const erreur = document.querySelector(`#erreur-quantite-${id}`);
   if (quantite < 0 || quantite > 100) {
     erreur.textContent = "Vous devez avoir entre 1 et 100 articles";
-    input.value = quantite > 100 ? 100 : 0
+    input.value = quantite > 100 ? 100 : 0;
   } else if (quantite == 0) {
-    supprimerArticle(id)
+    supprimerArticle(id);
   } else {
     produitAModifier.quantite = quantite;
     localStorage.setItem("panier", JSON.stringify(panier));
     erreur.textContent = "";
   }
-  calcTotals()
+  calcTotals();
 }
 
 // Fonction de suppression d'élément
@@ -106,28 +105,30 @@ function supprimerArticle(id) {
   modal.showModal();
 
   // Ecouter si l'utilisateur confirme ou non vouloir supprimer l'article
-  const boutonOui = document.querySelector('#yes')
-  const boutonNon = document.querySelector('#no')
+  const boutonOui = document.querySelector("#yes");
+  const boutonNon = document.querySelector("#no");
 
-  boutonNon.addEventListener('click', (e) => {
-    modal.close()
-    modal.remove()
-    document.querySelector(`#quantity-${id}`).value = document.querySelector(`#quantity-${id}`).value <= 0 ? 1 : document.querySelector(`#quantity-${id}`).value
-    calcTotals()
-  })
+  boutonNon.addEventListener("click", (e) => {
+    modal.close();
+    modal.remove();
+    document.querySelector(`#quantity-${id}`).value =
+      document.querySelector(`#quantity-${id}`).value <= 0
+        ? 1
+        : document.querySelector(`#quantity-${id}`).value;
+    calcTotals();
+  });
 
-  boutonOui.addEventListener('click', (e) => {
-    const index = panier.indexOf(produitASupprimer)
-    if(index != -1){
-      panier.splice(index, 1)
+  boutonOui.addEventListener("click", (e) => {
+    const index = panier.indexOf(produitASupprimer);
+    if (index != -1) {
+      panier.splice(index, 1);
     }
-    modal.close()
-    modal.remove()
-    articleASupprimer.remove()
+    modal.close();
+    modal.remove();
+    articleASupprimer.remove();
     localStorage.setItem("panier", JSON.stringify(panier));
-    calcTotals()
-  })
-
+    calcTotals();
+  });
 }
 
 // Calcul du total d'article et du total de prix
@@ -143,11 +144,13 @@ function calcTotals() {
     articleTotal += parseInt(quantite);
     prixTotal += parseInt(quantite) * prix;
   });
-  if(panier == []){
-    articleTotal = 0
-    prixTotal = 0
+  if (panier == []) {
+    articleTotal = 0;
+    prixTotal = 0;
   }
-  totalArticles.textContent = `${articleTotal} articles pour un montant de ${prixTotal.toFixed(2)} €`;
+  totalArticles.textContent = `${articleTotal} articles pour un montant de ${prixTotal.toFixed(
+    2
+  )} €`;
 }
 
 // Récupération du panier dans le local storage s'il existe, sinon création d'un panier vide
@@ -156,3 +159,49 @@ const panier = localStorage.getItem("panier")
   : [];
 
 populateDatas();
+
+// Gestion du formulaire
+const formulaire = document.querySelector("form");
+formulaire.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const regexFirstName = /^[a-zA-ZÀ-ÿ- ]{2,}$/; // Toutes les majuscules et minuscule, toutes les lettres avec accents, espaces et tirets. Minimum 2 caractères
+  const regexLastName = /^[a-zA-ZÀ-ÿ- ]{2,}$/; // Toutes les majuscules et minuscule, toutes les lettres avec accents, espaces et tirets. Minimum 2 caractères
+  const regexAddress = /^[a-zA-Z0-9à-ÿÀ-ÿ' -]{10,}$/; // Toutes les majuscules et minuscules, toutes les lettres avec accents, tous les chiffres, les espaces, tirets et apostrophes. Minimum 10 caractères
+  const regexCity = /^[a-zA-Zà-ÿÀ-ÿ -]{3,}$/; // Toutes les majuscules et minuscule, toutes les lettres avec accents, espaces et tirets. Minimum 3 caractères
+  const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/; // Toutes les majuscules et minuscules, tous les chiffres, les points, les tirets et les underscores. Un arobase obligatoire. Toutes les majuscules et minuscules, tous les chiffres, les points et les tirets. Un point obligatoire. Toutes les majuscules et minuscules, entre 2 et 10 caractères.
+  let isCorrect = true
+  if(!regexFirstName.test(document.querySelector('#first-name').value)){
+    isCorrect = false
+    document.querySelector('#error-first-name').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  } else {
+    document.querySelector('#error-first-name').textContent = ""
+  }
+  if(!regexLastName.test(document.querySelector('#last-name').value)){
+    isCorrect = false
+    document.querySelector('#error-last-name').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  } else {
+    document.querySelector('#error-last-name').textContent = ""
+  }
+  if(!regexAddress.test(document.querySelector('#address').value)){
+    isCorrect = false
+    document.querySelector('#error-address').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  } else {
+    document.querySelector('#error-address').textContent = ""
+  }
+  if(!regexCity.test(document.querySelector('#city').value)){
+    isCorrect = false
+    document.querySelector('#error-city').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  } else {
+    document.querySelector('#error-city').textContent = ""
+  }
+  if(!regexEmail.test(document.querySelector('#mail').value)){
+    isCorrect = false
+    document.querySelector('#error-mail').textContent = "Erreur ! Veuillez entrer une valeur valide"
+  } else {
+    document.querySelector('#error-mail').textContent = ""
+  }
+  if(!isCorrect){
+    return
+  }
+  
+});
