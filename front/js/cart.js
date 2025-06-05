@@ -8,10 +8,13 @@ async function getDatas() {
   }
 }
 
+// On rend les datas accessible partout dans le document
+let datas;
+
 // Affichage des données du produit
 async function populateDatas() {
   try {
-    const datas = await getDatas();
+    datas = await getDatas();
     if (panier.length === 0) {
       document.querySelector("#panier > div").insertAdjacentHTML(
         "afterbegin",
@@ -28,7 +31,7 @@ async function populateDatas() {
       const { titre, image, declinaisons } = produitRecherche;
       const tailleChoisie = declinaisons[taille];
       const { prix } = tailleChoisie;
-      const template = `<article>
+      const template = `<article id="${idCart}">
             <img src="${image}" alt="${titre}">
             <h2>${titre}</h2>
             <p>${taille}</p>
@@ -45,9 +48,10 @@ async function populateDatas() {
         .insertAdjacentHTML("afterbegin", template);
       const input = document.querySelector("input");
       input.addEventListener("change", (e) => {
-        updateCart(idCart, input.value);
+        updateCart(idCart, input.value, input);
       });
     });
+    calcTotals();
   } catch (e) {
     console.error(e);
     document.querySelector("#panier > div").insertAdjacentHTML(
@@ -61,16 +65,54 @@ async function populateDatas() {
 }
 
 // Mise à jour du panier
-function updateCart(id, quantite) {
+function updateCart(id, quantite, input) {
   const produitAModifier = panier.find((produit) => produit.idCart === id);
   const erreur = document.querySelector(`#erreur-quantite-${id}`);
   if (quantite < 0 || quantite > 100) {
     erreur.textContent = "Vous devez avoir entre 1 et 100 articles";
+    input.value = quantite > 100 ? 100 : 0
+  } else if (quantite === 0) {
   } else {
     produitAModifier.quantite = quantite;
     localStorage.setItem("panier", JSON.stringify(panier));
     erreur.textContent = "";
   }
+  calcTotals()
+}
+
+// Fonction de suppression d'élément
+function supprimerArticle(id) {
+  const articleASupprimer = document.querySelector(`#${id}`);
+  const modal = document.createElement("dialog");
+  modal.id = "delete";
+  modal.innerHTML = `
+      <i class="fa-solid fa-xmark"></i>
+      <p id="title-modale">Supprimer un article</p>
+      <p>Êtes-vous sûr de vouloir supprimer cet article ?</p>
+      <div>
+         <button id="yes">Oui</button>
+         <button id="no">Non</button>
+      </div>`;
+  document.body.insertAdjacentElement("afterbegin", modal);
+  modal.showModal();
+
+
+}
+
+// Calcul du total d'article et du total de prix
+function calcTotals() {
+  const totalArticles = document.querySelector("#total-article");
+  let prixTotal = 0;
+  let articleTotal = 0;
+  panier.forEach((article) => {
+    const { id, taille, quantite } = article;
+    const infoArticle = datas.find((art) => art._id === id);
+    const { declinaisons } = infoArticle;
+    const prix = declinaisons[taille].prix;
+    articleTotal += parseInt(quantite);
+    prixTotal += parseInt(quantite) * prix;
+  });
+  totalArticles.textContent = `${articleTotal} articles pour un montant de ${prixTotal.toFixed(2)} €`;
 }
 
 // Récupération du panier dans le local storage s'il existe, sinon création d'un panier vide

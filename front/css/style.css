@@ -408,10 +408,75 @@ article > div > div.price > p {
         border: none;
         margin-top: 90px;
 
-        &:hover{
-            cursor: pointer;;
+        &:hover {
+          cursor: pointer;
         }
       }
+    }
+  }
+}
+
+dialog {
+  width: 1350px;
+  height: 483px;
+
+  i{
+    color: black;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 25px;
+
+    &:hover{
+      cursor: pointer;
+    }
+  }
+
+  p,
+  li{
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    font-size: 32px;
+    margin: 0;
+    align-self: center;
+  }
+
+  #title-modale {
+    font-weight: 700 !important;
+    font-size: 40px !important;
+    text-align: center;
+    padding-bottom: 160px;
+  }
+
+  &::backdrop{
+    background: #000000b0;
+  }
+}
+
+#delete {
+  text-align: center;
+
+  div {
+    max-width: 300px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+  }
+
+  button {
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+    background: none;
+    border: 1px solid #ee7f43;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+
+    &:hover{
+      background: #ee7f43;
+      color: white;
+      cursor: pointer;
     }
   }
 }
