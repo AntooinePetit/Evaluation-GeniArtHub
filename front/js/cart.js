@@ -105,6 +105,12 @@ function supprimerArticle(id) {
   document.body.insertAdjacentElement("afterbegin", modal);
   modal.showModal();
 
+  document.querySelector("dialog > i").addEventListener("click", () => {
+    modal.close();
+    modal.remove();
+    return;
+  });
+
   // Ecouter si l'utilisateur confirme ou non vouloir supprimer l'article
   const boutonOui = document.querySelector("#yes");
   const boutonNon = document.querySelector("#no");
